@@ -8,8 +8,8 @@ progress · ⬜ planned.
 
 | # | Project | Pitch | Tier | Status |
 |---|---------|-------|------|--------|
-| 01 | `01-reaction-diffusion` | Gray-Scott chemicals paint coral, mitosis, worms | easy | 🔨 |
-| 02 | `02-fluid` | Real-time smoke/dye fluid — advection + pressure solve | medium | ⬜ |
+| 01 | `01-reaction-diffusion` | Gray-Scott chemicals paint coral, mitosis, worms | easy | ✅ |
+| 02 | `02-fluid` | Real-time smoke/dye fluid — advection + pressure solve | medium | ✅ |
 | 03 | `03-fire` | Volumetric fire & smoke — buoyancy, temperature color | medium | ⬜ |
 | 04 | `04-lightning` | Branching bolts — charge propagation + glow | easy-med | ⬜ |
 | 05 | `05-terrain-erosion` | Rainfall carves rivers and canyons into noise terrain | medium | ⬜ |

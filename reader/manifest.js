@@ -3,8 +3,8 @@
 window.ACADEMY_PROJECTS = [
   { id: "01-reaction-diffusion", title: "Reaction-Diffusion", tier: "easy", language: "Python", status: "available",
     pitch: "Two invisible chemicals spread and react on your GPU — and coral, cells, and worms grow out of the math." },
-  { id: "02-fluid", title: "Fluid Simulator", tier: "medium", language: "Python", status: "coming",
-    pitch: "Real-time smoke and dye — advection, pressure, swirling ink." },
+  { id: "02-fluid", title: "Fluid Simulator", tier: "medium", language: "Python", status: "available",
+    pitch: "Stir a box of incompressible ink — semi-Lagrangian advection, a real pressure solve, and swirls that answer your hand." },
   { id: "03-fire", title: "Fire & Smoke", tier: "medium", language: "Python", status: "coming",
     pitch: "Volumetric fire — buoyancy, temperature, glow." },
   { id: "04-lightning", title: "Lightning", tier: "easy", language: "Python", status: "coming",
