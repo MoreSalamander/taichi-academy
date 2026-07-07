@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+.DS_Store
+
+# Learner workspace — hand-typed during guided sessions, never committed
+projects/*/my_build/

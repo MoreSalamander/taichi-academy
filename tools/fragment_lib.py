@@ -1,0 +1,142 @@
+"""Shared fragment engine for taichi-academy lessons.
+
+A project's code SOT is `projects/<id>/lessons/fragments.py`, which builds a
+FragmentSet: an ordered list of code fragments in FINAL document order, each
+with one or more versions keyed by (chapter, step) tuples. Rendering a step
+assembles every fragment's latest version at-or-before that step — the
+"whole file so far" a learner should have after typing that step.
+
+Generalized from buildit-remaster/tools/build_fulls.py; (chapter, step) tuple
+keys replace the c*10+s encoding (which capped chapters at 9 steps), and
+renders are per-file dicts so multi-file projects need no migration.
+"""
+
+import difflib
+import importlib.util
+import json
+import py_compile
+import sys
+import tempfile
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+
+
+class FragmentSet:
+    def __init__(self, project_id, default_file, reference, chapter_steps):
+        self.project_id = project_id
+        self.default_file = default_file
+        self.reference = reference  # {filename: path to verified reference file}
+        self.chapter_steps = chapter_steps  # {chapter: number of steps}
+        self.fragments = []  # [(filename, [((c, s), text), ...])] in final doc order
+
+    def frag(self, *versions, file=None):
+        """Register one fragment. versions = ((chapter, step), text) pairs in
+        chronological order; later versions REPLACE earlier ones."""
+        self.fragments.append((file or self.default_file, list(versions)))
+
+    def steps(self):
+        return [
+            (c, s)
+            for c in sorted(self.chapter_steps)
+            for s in range(1, self.chapter_steps[c] + 1)
+        ]
+
+    def render(self, upto):
+        """{filename: whole-file-so-far} after completing step `upto` (a (c, s) tuple)."""
+        parts = {}
+        for fname, versions in self.fragments:
+            cur = None
+            for key, text in versions:
+                if key <= upto:
+                    cur = text
+            if cur is not None:
+                parts.setdefault(fname, []).append(cur)
+        return {f: "\n".join(p) + "\n" for f, p in parts.items()}
+
+    def new_at(self, step):
+        """Fragment texts introduced (or re-versioned) exactly at `step`, in doc order."""
+        return [
+            text
+            for _fname, versions in self.fragments
+            for key, text in versions
+            if key == step
+        ]
+
+
+def norm(src):
+    """Comparison form: rstrip lines, drop blanks and #-comment lines."""
+    lines = [ln.rstrip() for ln in src.split("\n")]
+    return "\n".join(ln for ln in lines if ln.strip() and not ln.strip().startswith("#"))
+
+
+def load_spec(project_id):
+    """Import projects/<id>/lessons/fragments.py and return its SPEC FragmentSet."""
+    frag_path = REPO_ROOT / "projects" / project_id / "lessons" / "fragments.py"
+    if not frag_path.exists():
+        sys.exit(f"no fragments file at {frag_path}")
+    if str(REPO_ROOT / "tools") not in sys.path:
+        sys.path.insert(0, str(REPO_ROOT / "tools"))
+    spec = importlib.util.spec_from_file_location(f"fragments_{project_id}", frag_path)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod.SPEC
+
+
+def verify(fs):
+    """Compile every step's render; assert final == normalized reference.
+    Returns the ordered list of per-step {filename: code} dicts."""
+    all_steps = fs.steps()
+    fulls = []
+    for step in all_steps:
+        files = fs.render(step)
+        for fname, code in files.items():
+            if fname.endswith(".py"):
+                with tempfile.NamedTemporaryFile("w", suffix=".py", delete=False) as f:
+                    f.write(code)
+                try:
+                    py_compile.compile(f.name, doraise=True)
+                except Exception as e:
+                    sys.exit(f"COMPILE FAIL at ch{step[0]} step{step[1]} ({fname}): {e}")
+        fulls.append(files)
+
+    final = fs.render(all_steps[-1])
+    for fname, ref_path in fs.reference.items():
+        ref = Path(ref_path).read_text()
+        if norm(final.get(fname, "")) != norm(ref):
+            print(f"FINAL != reference for {fname}. diff:")
+            for line in difflib.unified_diff(
+                norm(ref).split("\n"),
+                norm(final.get(fname, "")).split("\n"),
+                "reference",
+                "generated",
+                lineterm="",
+            ):
+                print(line)
+            sys.exit(1)
+    return fulls
+
+
+def emit_fulls(fs, out_path):
+    """Verify, then write reader fulls: ACADEMY_FULLS[project][ch-1][step-1] = {file: code}."""
+    fulls = verify(fs)
+    arr = []
+    i = 0
+    for c in sorted(fs.chapter_steps):
+        row = []
+        for _s in range(1, fs.chapter_steps[c] + 1):
+            row.append(fulls[i])
+            i += 1
+        arr.append(row)
+    out_path = Path(out_path)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    out_path.write_text(
+        "// Auto-generated by tools/build_fulls.py — do not edit by hand.\n"
+        "window.ACADEMY_FULLS = window.ACADEMY_FULLS || {};\n"
+        f"window.ACADEMY_FULLS[{json.dumps(fs.project_id)}] = "
+        + json.dumps(arr, ensure_ascii=False)
+        + ";\n"
+    )
+    n = len(fs.steps())
+    print(f"ALL {n} steps compile; final == reference (normalized) ✅")
+    print(f"wrote {out_path.relative_to(REPO_ROOT)}")
