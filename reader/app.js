@@ -93,27 +93,188 @@
       const meta = PROJECTS.find((p) => p.id === id);
       if (meta && meta.status === "available") el.onclick = () => openProject(id);
     });
-    document.getElementById("setupLink").onclick = () => { state = { view: "setup" }; render(); };
+    document.getElementById("setupLink").onclick = () => startSetup();
   }
 
-  /* ---------- setup page (static, terse — this repo, not generic) ---------- */
+  /* ---------- setup interview: deterministic readiness machine, chat UI ----------
+     One shared .venv serves every project (see CLAUDE.md) — this walkthrough runs
+     once, from a genuinely empty machine, not per-project. */
+  const sBot = (t) => state.setup.log.push({ who: "bot", text: t });
+  const sYou = (t) => state.setup.log.push({ who: "you", text: t });
+  const OS = {
+    mac: {
+      where: "your Mac", term: "Press ⌘ + Space, type Terminal, and press Enter.",
+      pycmd: "python3.11 --version", pyinstall: "https://www.python.org/downloads/release/python-3119/ (or `brew install python@3.11`)",
+      venvcmd: "python3.11 -m venv .venv", activatecmd: "source .venv/bin/activate", prompt: "(.venv)",
+    },
+    other: {
+      where: "your PC", term: "Click Start, type PowerShell, and press Enter.",
+      pycmd: "py -3.11 --version", pyinstall: "https://www.python.org/downloads/release/python-3119/ — tick \"Add Python to PATH\" during install",
+      venvcmd: "py -3.11 -m venv .venv", activatecmd: ".venv\\Scripts\\activate", prompt: "(.venv)",
+    },
+  };
+  const linkify = (s) => s.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>');
+
+  function startSetup() {
+    state = { view: "setup", setup: { os: null, stage: "os", log: [] } };
+    sBot("Let's set this up from a clean machine — about five minutes, one step at a time. First: are you on a Mac, or Windows/Linux?");
+    render();
+  }
+
   function renderSetup() {
+    const st = state.setup;
+    const fmtBot = (t) => linkify(esc(t)).replace(/\n/g, "<br>");
+    const fmtYou = (t) => esc(t).replace(/\n/g, "<br>");
+    const bubbles = st.log.map((m) => `<div class="bubble ${m.who}">${m.who === "bot" ? fmtBot(m.text) : fmtYou(m.text)}</div>`).join("");
     app.innerHTML = `<div class="setup">
       <div class="crumbs"><a id="home">← All projects</a></div>
-      <div class="chat">
-        <div class="bubble bot">One-time setup — five commands in a terminal, from wherever you keep your projects:</div>
-        <div class="bubble bot"><code>git clone https://github.com/MoreSalamander/taichi-academy.git<br>
-cd taichi-academy<br>
-python3.11 -m venv .venv<br>
-source .venv/bin/activate<br>
-pip install -e ".[dev]"</code></div>
-        <div class="bubble bot">Sanity check — this should open a window of living coral (Esc closes it):<br><code>python projects/01-reaction-diffusion/reference/gray_scott.py</code></div>
-        <div class="bubble bot">When you build along with a project, type into its <b>my_build/</b> folder — e.g. create <code>projects/01-reaction-diffusion/my_build/gray_scott.py</code> and run it from there with <code>python gray_scott.py</code>. The reference stays pristine; my_build is yours.</div>
-      </div>
-      <div class="setup-controls"><button class="btn primary" id="build">I'm set up — show me the projects</button></div>
+      <div class="chat">${bubbles}</div>
+      <div class="setup-controls" id="ctrls"></div>
     </div>`;
     document.getElementById("home").onclick = () => { state = { view: "menu" }; render(); };
-    document.getElementById("build").onclick = () => { state = { view: "menu" }; render(); };
+    const c = document.getElementById("ctrls");
+    const btn = (id, label, primary) => `<button class="btn ${primary ? "primary" : ""}" id="${id}">${label}</button>`;
+    const on = (id, fn) => { const e = document.getElementById(id); if (e) e.onclick = fn; };
+
+    if (st.stage === "os") {
+      c.innerHTML = btn("os-mac", "🍎 Mac", true) + btn("os-other", "🪟 Windows / 🐧 Linux");
+      on("os-mac", () => chooseOS("mac")); on("os-other", () => chooseOS("other"));
+    } else if (st.stage === "python") {
+      c.innerHTML = `<textarea id="pyout" placeholder="Paste what the command printed…"></textarea><div class="hbtns">${btn("py-go", "Check it", true)}</div>`;
+      on("py-go", submitPython);
+    } else if (st.stage === "python_unclear") {
+      c.innerHTML = btn("py-have", "It showed Python 3.11.x", true) + btn("py-wrong", "It showed a different version") + btn("py-none", "It showed an error");
+      on("py-have", () => pythonResult("ok")); on("py-wrong", () => pythonResult("wrong")); on("py-none", () => pythonResult("missing"));
+    } else if (st.stage === "python_install") {
+      c.innerHTML = btn("py-again", "I've installed 3.11 — check again", true);
+      on("py-again", recheckPython);
+    } else if (st.stage === "clone") {
+      c.innerHTML = btn("cloned", "Done — I'm inside the taichi-academy folder", true);
+      on("cloned", () => { sYou("Cloned and cd'd in"); goVenvCreate(); render(); });
+    } else if (st.stage === "venv_create") {
+      c.innerHTML = btn("venv-made", "Ran it, no red text", true);
+      on("venv-made", () => { sYou("Created the venv"); goVenvActivate(); render(); });
+    } else if (st.stage === "venv_activate") {
+      c.innerHTML = `<textarea id="promptout" placeholder="Paste what your prompt line looks like now…"></textarea><div class="hbtns">${btn("prompt-go", "Check it", true)}</div>`;
+      on("prompt-go", submitActivate);
+    } else if (st.stage === "activate_unclear") {
+      c.innerHTML = btn("prompt-yes", `Yes, it shows ${OS[st.os].prompt}`, true) + btn("prompt-no", "No, it looks the same as before");
+      on("prompt-yes", () => activateResult(true)); on("prompt-no", () => activateResult(false));
+    } else if (st.stage === "pip_install") {
+      c.innerHTML = btn("pip-done", "It finished, no red text", true);
+      on("pip-done", () => { sYou("Installed dependencies"); goVerify(); render(); });
+    } else if (st.stage === "verify") {
+      c.innerHTML = `<textarea id="verout" placeholder="Paste what printed…"></textarea><div class="hbtns">${btn("ver-go", "Check it", true)}</div>`;
+      on("ver-go", submitVerify);
+    } else if (st.stage === "verify_unclear") {
+      c.innerHTML = btn("ver-yes", "Yes, something like 1.7.4", true) + btn("ver-no", "No, an error");
+      on("ver-yes", () => verifyResult(true)); on("ver-no", () => verifyResult(false));
+    } else if (st.stage === "ready") {
+      c.innerHTML = btn("build", "Start building 🧪", true);
+      on("build", () => { state = { view: "menu" }; render(); });
+    }
+    const chat = document.querySelector(".chat"); if (chat) chat.scrollTop = chat.scrollHeight;
+  }
+
+  function chooseOS(os) {
+    state.setup.os = os; sYou(os === "mac" ? "Mac" : "Windows / Linux");
+    const o = OS[os];
+    sBot(`Good. First, does this machine already have Python 3.11 — the exact version this repo needs (not 3.12, not 3.9).\n1) ${o.term}\n2) Type this and press Enter:   ${o.pycmd}\n3) Paste whatever it says back to me below.`);
+    state.setup.stage = "python"; render();
+  }
+  function submitPython() {
+    const out = (document.getElementById("pyout").value || "").trim();
+    if (!out) return;
+    sYou(out);
+    if (/python\s*3\.11(\.|$| )/i.test(out)) return pythonResult("ok");
+    if (/python\s*3\.\d+/i.test(out)) return pythonResult("wrong");
+    if (/command not found|not recognized|no such|not found/i.test(out)) return pythonResult("missing");
+    sBot("I couldn't read that for sure. Did it show Python 3.11.something, a different version, or an error?");
+    state.setup.stage = "python_unclear"; render();
+  }
+  function pythonResult(kind) {
+    if (kind === "ok") {
+      sBot("Python 3.11 confirmed. ✓");
+      goClone();
+    } else if (kind === "wrong") {
+      const o = OS[state.setup.os];
+      sBot(`That's a different Python version — this repo is pinned to 3.11 exactly (taichi's wheels and the .python-version file both expect it). Install 3.11 alongside whatever you have — it won't conflict:\n1) Go to ${o.pyinstall}\n2) Download and run the installer for 3.11.\nThen come back and we'll check again.`);
+      state.setup.stage = "python_install";
+    } else {
+      const o = OS[state.setup.os];
+      sBot(`No problem — let's install it:\n1) Go to ${o.pyinstall}\n2) Download and run the installer.` +
+        (state.setup.os === "other" ? "\n3) IMPORTANT: tick \"Add Python to PATH\" at the bottom before clicking Install." : "") +
+        "\nThen come back and we'll check again.");
+      state.setup.stage = "python_install";
+    }
+    render();
+  }
+  function recheckPython() {
+    sYou("Installed Python 3.11");
+    sBot(`Let's confirm. Type this, press Enter, and paste the result:   ${OS[state.setup.os].pycmd}`);
+    state.setup.stage = "python"; render();
+  }
+  function goClone() {
+    sBot('Next, get the code (skip this if you already have the folder open):\n1) In the same terminal, run:\ngit clone https://github.com/MoreSalamander/taichi-academy.git\n2) Then:\ncd taichi-academy');
+    state.setup.stage = "clone";
+  }
+  function goVenvCreate() {
+    const o = OS[state.setup.os];
+    sBot(`Now the venv — a private sandbox of dependencies just for this repo, so taichi here never clashes with anything else on your machine. Every project in the series shares this ONE venv. Create it:\n${o.venvcmd}\nYou'll see no output at all if it worked — that's success.`);
+    state.setup.stage = "venv_create";
+  }
+  function goVenvActivate() {
+    const o = OS[state.setup.os];
+    sBot(`Now switch your terminal INTO that sandbox — you have to do this every time you open a new terminal:\n${o.activatecmd}\nLook at your prompt line afterward and paste what it looks like now.`);
+    state.setup.stage = "venv_activate";
+  }
+  function submitActivate() {
+    const out = (document.getElementById("promptout").value || "").trim();
+    if (!out) return;
+    sYou(out);
+    if (out.includes(".venv") || /^\(\.venv\)/.test(out)) return activateResult(true);
+    state.setup.stage = "activate_unclear"; render();
+  }
+  function activateResult(ok) {
+    if (ok) {
+      sBot("The (.venv) tag means you're in the sandbox now — every python and pip command from here goes into it. ✓");
+      goPipInstall();
+    } else {
+      const o = OS[state.setup.os];
+      sBot(`It should start with (.venv) — that's how you'll always know you're in the right place. Run the activate command again and check your prompt:\n${o.activatecmd}`);
+      state.setup.stage = "venv_activate";
+    }
+    render();
+  }
+  function goPipInstall() {
+    sBot('Last install step — this pulls in taichi and numpy (taichi\'s wheel is sizeable, give it a minute):\npip install -e ".[dev]"\nWait for it to finish and land back at your prompt with no red text.');
+    state.setup.stage = "pip_install";
+  }
+  function goVerify() {
+    sBot('One check that it all actually works — paste back what this prints:\npython -c "import taichi; print(taichi.__version__)"');
+    state.setup.stage = "verify";
+  }
+  function submitVerify() {
+    const out = (document.getElementById("verout").value || "").trim();
+    if (!out) return;
+    sYou(out);
+    if (/^\(?\d+,?\s*\d+,?\s*\d+\)?$/.test(out) || /\d+\.\d+\.\d+/.test(out)) return verifyResult(true);
+    if (/no module named|traceback|error/i.test(out)) return verifyResult(false);
+    state.setup.stage = "verify_unclear"; render();
+  }
+  function verifyResult(ok) {
+    if (ok) {
+      sBot("That's a real Taichi version string — you're fully set up. ✓ Python 3.11, the venv, taichi: all working.");
+      goReady();
+    } else {
+      sBot('That means the venv isn\'t active in this terminal, or the install step didn\'t finish. Re-activate and reinstall:\nsource .venv/bin/activate   (or .venv\\Scripts\\activate on Windows)\npip install -e ".[dev]"\nThen try the import check again.');
+      state.setup.stage = "pip_install";
+    }
+    render();
+  }
+  function goReady() {
+    sBot('You\'re ready. One habit for every project: type your own code into its my_build/ folder (e.g. projects/01-reaction-diffusion/my_build/gray_scott.py) and run it from there — the reference/ files stay untouched as your answer key. Let\'s build something.');
+    state.setup.stage = "ready";
   }
 
   /* ---------- reader ---------- */
