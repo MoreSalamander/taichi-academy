@@ -12,7 +12,7 @@ progress · ⬜ planned.
 | 02 | `02-fluid` | Real-time smoke/dye fluid — advection + pressure solve | medium | ✅ |
 | 03 | `03-fire` | Volumetric fire & smoke — buoyancy, temperature color | medium | ✅ |
 | 04 | `04-lightning` | Branching bolts — charge propagation + glow | easy-med | ✅ |
-| 05 | `05-terrain-erosion` | Rainfall carves rivers and canyons into noise terrain | medium | ⬜ |
+| 05 | `05-terrain-erosion` | Rainfall carves rivers and canyons into noise terrain | medium | ✅ |
 
 ## Arc 2 — particles at scale
 
