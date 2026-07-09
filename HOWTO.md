@@ -11,13 +11,24 @@ simulation.
 
 ## 0. One-time setup
 
-Point your browser at the reader (`cd reader && python3 -m http.server 8080`, then
-`localhost:8080`) and click **"Set up the repo first →"** at the bottom of the landing page.
-It's a short interview — picks your OS, checks you have Python 3.11 specifically, walks you
-through creating and activating the shared `.venv`, installs dependencies, and verifies
-`import taichi` actually works — with a fix-and-retry loop at every step if something's off.
+Four commands, once, in a terminal:
 
-If you'd rather type the commands yourself, they're in [README.md](README.md#setup).
+```bash
+git clone https://github.com/MoreSalamander/taichi-academy.git
+cd taichi-academy
+python3.11 -m venv .venv
+source .venv/bin/activate      # Windows: .venv\Scripts\activate
+pip install -e ".[dev]"
+```
+
+Needs Python 3.11 specifically (not 3.12, not 3.9) — grab it from
+[python.org](https://www.python.org/downloads/release/python-3119/) if you don't have it, then
+run the five lines above. That's it — no further checks needed; if `pip install` finishes
+without red text, you're set up.
+
+The reader (`cd reader && python3 -m http.server 8080`, then `localhost:8080`) has the same
+four commands on its "Set up the repo first →" page, with a button that drops you straight
+into project 01, chapter 1, step 1.
 
 ## 1. Learning via the reader
 
