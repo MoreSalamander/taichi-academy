@@ -17,6 +17,8 @@ sandbox — each one taught as chapters of hand-typed steps.
 - Reference implementations are written and verified FIRST; lessons are decomposed from them
   with a compile-checked fragment pipeline (`tools/`).
 
+See [HOWTO.md](HOWTO.md) for a detailed walkthrough of using the reader and guided sessions.
+
 ## Setup
 
 ```bash
