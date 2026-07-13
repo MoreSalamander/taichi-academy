@@ -18,31 +18,31 @@ progress · ⬜ planned.
 
 | # | Project | Pitch | Tier | Status |
 |---|---------|-------|------|--------|
-| 06 | `06-particle-life-3d` | Millions of particles, species rules, emergent ecology in 3D | medium | ⬜ |
-| 07 | `07-particle-painting` | Paint with fire, water, smoke, sparks | easy-med | ⬜ |
-| 08 | `08-mpm-snow-sand` | Material Point Method — avalanches, dunes, crumbling | hard | ⬜ |
-| 09 | `09-soft-body` | Jelly, rubber, balloons — deformable bodies | medium | ⬜ |
-| 10 | `10-cloth-rope` | Flags, capes, nets — constraint physics | medium | ⬜ |
-| 11 | `11-tornado` | Rotating vortex, flying debris, pressure gradients | medium | ⬜ |
+| 06 | `06-particle-life-3d` | Millions of particles, species rules, emergent ecology in 3D | medium | ✅ |
+| 07 | `07-particle-painting` | Paint with fire, water, smoke, sparks | easy-med | ✅ |
+| 08 | `08-mpm-snow-sand` | Material Point Method — avalanches, dunes, crumbling | hard | ✅ |
+| 09 | `09-soft-body` | Jelly, rubber, balloons — deformable bodies | medium | ✅ |
+| 10 | `10-cloth-rope` | Flags, capes, nets — constraint physics | medium | ✅ |
+| 11 | `11-tornado` | Rotating vortex, flying debris, pressure gradients | medium | ✅ |
 
 ## Arc 3 — procedural worlds
 
 | # | Project | Pitch | Tier | Status |
 |---|---------|-------|------|--------|
-| 12 | `12-volumetric-clouds` | 3D noise + ray marching + dynamic light | hard | ⬜ |
-| 13 | `13-planet-generator` | Continents, oceans, atmosphere, ice caps | hard | ⬜ |
-| 14 | `14-galaxy-creator` | Spirals, ellipticals, nebulae, star clusters | medium | ⬜ |
-| 15 | `15-star-nursery` | Stars ignite inside collapsing molecular clouds | hard | ⬜ |
-| 16 | `16-solar-system` | Accurate orbits, planet formation, comets | medium | ⬜ |
-| 17 | `17-plate-tectonics` | Continental drift, mountains, quakes, volcanoes | hard | ⬜ |
-| 18 | `18-ocean-currents` | Global currents, temperature, salinity, storms | hard | ⬜ |
+| 12 | `12-volumetric-clouds` | 3D noise + ray marching + dynamic light | hard | ✅ |
+| 13 | `13-planet-generator` | Continents, oceans, atmosphere, ice caps | hard | ✅ |
+| 14 | `14-galaxy-creator` | Spirals, ellipticals, nebulae, star clusters | medium | ✅ |
+| 15 | `15-star-nursery` | Stars ignite inside collapsing molecular clouds | hard | ✅ |
+| 16 | `16-solar-system` | Accurate orbits, planet formation, comets | medium | ✅ |
+| 17 | `17-plate-tectonics` | Continental drift, mountains, quakes, volcanoes | hard | ✅ |
+| 18 | `18-ocean-currents` | Global currents, temperature, salinity, storms | hard | ✅ |
 
 ## Arc 4 — mathematical art
 
 | # | Project | Pitch | Tier | Status |
 |---|---------|-------|------|--------|
-| 19 | `19-strange-attractors` | Lorenz, Clifford, Thomas, Aizawa in motion | easy | ⬜ |
-| 20 | `20-mandelbulb` | Ray-marched 3D fractal with infinite zoom | hard | ⬜ |
+| 19 | `19-strange-attractors` | Lorenz, Clifford, Thomas, Aizawa in motion | easy | ✅ |
+| 20 | `20-mandelbulb` | Ray-marched 3D fractal with infinite zoom | hard | ✅ |
 
 ## Arc 5 — AI & emergence
 
