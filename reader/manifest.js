@@ -53,7 +53,7 @@ window.ACADEMY_PROJECTS = [
     pitch: "One pair force between atoms and a symplectic integrator — and matter melts, boils, freezes, and grows crystals, all from the bottom up." },
   { id: "26-destruction", title: "Destruction Engine", tier: "hard", language: "Python", status: "available",
     pitch: "Buildings fracturing under explosions and quakes." },
-  { id: "27-voxel-sandbox", title: "Voxel Sandbox", tier: "hard", language: "Python", status: "coming",
+  { id: "27-voxel-sandbox", title: "Voxel Sandbox", tier: "hard", language: "Python", status: "available",
     pitch: "A destructible voxel world — water, lava, fire, sand." },
   { id: "28-digital-brain", title: "Digital Brain", tier: "hard", language: "Python", status: "coming",
     pitch: "Millions of neurons firing with synaptic plasticity." },
