@@ -58,7 +58,7 @@ progress · ⬜ planned.
 
 | # | Project | Pitch | Tier | Status |
 |---|---------|-------|------|--------|
-| 26 | `26-destruction` | Buildings fracture under explosions and quakes | hard | ⬜ |
+| 26 | `26-destruction` | Buildings fracture under explosions and quakes | hard | ✅ |
 | 27 | `27-voxel-sandbox` | Destructible voxel world — water, lava, fire, sand | hard | ⬜ |
 
 ## Arc 7 — dream projects (capstones)
