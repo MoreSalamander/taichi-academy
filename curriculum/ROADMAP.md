@@ -48,11 +48,11 @@ progress · ⬜ planned.
 
 | # | Project | Pitch | Tier | Status |
 |---|---------|-------|------|--------|
-| 21 | `21-ant-colony` | Pheromone trails, foraging, adaptation | medium | ⬜ |
-| 22 | `22-traffic` | AI drivers, lights, congestion, routing | medium | ⬜ |
-| 23 | `23-evolution` | Neural creatures, mutation, predators vs prey | hard | ⬜ |
-| 24 | `24-artificial-life` | Millions of organisms eat, reproduce, mutate | hard | ⬜ |
-| 25 | `25-molecular-dynamics` | Atoms, bonds, heat, crystal formation | medium | ⬜ |
+| 21 | `21-ant-colony` | Pheromone trails, foraging, adaptation | medium | ✅ |
+| 22 | `22-traffic` | AI drivers, lights, congestion, routing | medium | ✅ |
+| 23 | `23-evolution` | Neural creatures, mutation, foraging emerges | hard | ✅ |
+| 24 | `24-artificial-life` | Particle life — cells self-assemble, grow, divide | hard | ✅ |
+| 25 | `25-molecular-dynamics` | Atoms, bonds, heat, crystal formation | medium | ✅ |
 
 ## Arc 6 — game tech
 
