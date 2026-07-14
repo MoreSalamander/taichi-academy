@@ -55,7 +55,7 @@ window.ACADEMY_PROJECTS = [
     pitch: "Buildings fracturing under explosions and quakes." },
   { id: "27-voxel-sandbox", title: "Voxel Sandbox", tier: "hard", language: "Python", status: "available",
     pitch: "A destructible voxel world — water, lava, fire, sand." },
-  { id: "28-digital-brain", title: "Digital Brain", tier: "hard", language: "Python", status: "coming",
+  { id: "28-digital-brain", title: "Digital Brain", tier: "hard", language: "Python", status: "available",
     pitch: "Millions of neurons firing with synaptic plasticity." },
   { id: "29-earth-simulator", title: "Earth Simulator", tier: "epic", language: "Python", status: "coming",
     pitch: "Atmosphere, oceans, rivers, life, and cities in one world." },
