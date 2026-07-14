@@ -57,7 +57,7 @@ window.ACADEMY_PROJECTS = [
     pitch: "A destructible voxel world — water, lava, fire, sand." },
   { id: "28-digital-brain", title: "Digital Brain", tier: "hard", language: "Python", status: "available",
     pitch: "Millions of neurons firing with synaptic plasticity." },
-  { id: "29-earth-simulator", title: "Earth Simulator", tier: "epic", language: "Python", status: "coming",
+  { id: "29-earth-simulator", title: "Earth Simulator", tier: "epic", language: "Python", status: "available",
     pitch: "Atmosphere, oceans, rivers, life, and cities in one world." },
   { id: "30-universe-sandbox", title: "Universe Sandbox", tier: "epic", language: "Python", status: "coming",
     pitch: "Galaxies, black holes, stellar evolution — the capstone." },
