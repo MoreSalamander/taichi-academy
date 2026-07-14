@@ -59,6 +59,6 @@ window.ACADEMY_PROJECTS = [
     pitch: "Millions of neurons firing with synaptic plasticity." },
   { id: "29-earth-simulator", title: "Earth Simulator", tier: "epic", language: "Python", status: "available",
     pitch: "Atmosphere, oceans, rivers, life, and cities in one world." },
-  { id: "30-universe-sandbox", title: "Universe Sandbox", tier: "epic", language: "Python", status: "coming",
+  { id: "30-universe-sandbox", title: "Universe Sandbox", tier: "epic", language: "Python", status: "available",
     pitch: "Galaxies, black holes, stellar evolution — the capstone." },
 ];

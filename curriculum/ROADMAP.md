@@ -67,7 +67,7 @@ progress · ⬜ planned.
 |---|---------|-------|------|--------|
 | 28 | `28-digital-brain` | Millions of neurons firing with plasticity | hard | ✅ |
 | 29 | `29-earth-simulator` | Atmosphere + oceans + rivers + life + cities | epic | ✅ |
-| 30 | `30-universe-sandbox` | Galaxies, black holes, stellar evolution, civilizations | epic | ⬜ |
+| 30 | `30-universe-sandbox` | Galaxies, black holes, stellar evolution, civilizations | epic | ✅ |
 
 ## The pipeline (every project repeats it)
 
