@@ -5,9 +5,11 @@
 //
 // POST /api/chat  { mode: "check"|"help", ctx, pasted, findings }  ->  { text }
 // Requires env var: ANTHROPIC_API_KEY (set in the Vercel dashboard).
+// Deploy: point Vercel's Root Directory at `reader/` — this file becomes /api/chat.
 
 const SYSTEM =
-  "You are the calm helper inside 'Build It', a coding guide for absolute beginners. " +
+  "You are the calm helper inside taichi-academy, a hands-on course where people learn GPU " +
+  "simulation by typing every line of Taichi/Python themselves. " +
   "Reply in 2-5 short sentences, warm and plain — never a jargon dump, never condescending. " +
   "You are helping with ONE specific step; stay on it. " +
   "Ground every claim in the provided step facts, the deterministic check result, and the learner's pasted text. " +
@@ -25,6 +27,7 @@ export default async function handler(req, res) {
     const { mode, ctx = {}, pasted = "", findings = "" } = body;
 
     const L = [];
+    L.push(`Project: ${ctx.project || "?"}`);
     L.push(`Chapter: ${ctx.chapter || "?"}`);
     L.push(`Step: ${ctx.stepTitle || "?"}`);
     if (ctx.code) L.push(`The code this step adds:\n${ctx.code}`);
