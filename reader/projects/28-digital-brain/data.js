@@ -4,7 +4,7 @@ window.ACADEMY_SOT = window.ACADEMY_SOT || {};
 window.ACADEMY_SOT["28-digital-brain"] = {
   project: "28-digital-brain",
   title: "Digital Brain",
-  pitch: "A quarter-million spiking neurons on a sheet. Wire each to its neighbours with a pinch of excitation and a ring of inhibition, add a refractory pause, and the tissue erupts into travelling waves — then learns, strengthening the paths it uses most.",
+  pitch: "Sixty-five thousand spiking neurons on a sheet. Wire each to its neighbours with a pinch of excitation and a ring of inhibition, add a refractory pause, and the tissue erupts into travelling waves — then learns, strengthening the paths it uses most.",
   tier: "hard",
   language: "Python",
   file: "digital_brain.py",
