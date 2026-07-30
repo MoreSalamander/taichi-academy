@@ -1,0 +1,9 @@
+.venv/
+.git/
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+.DS_Store
+imgui.ini
+projects/*/my_build/
